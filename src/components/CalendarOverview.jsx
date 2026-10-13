@@ -7,9 +7,18 @@ export default function CalendarOverview() {
 
   useEffect(() => {
     fetch('/api/calendars')
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        }
+        const contentType = response.headers.get('content-type') || ''
+        if (!contentType.includes('application/json')) {
+          throw new Error('Expected JSON response')
+        }
+        return response.json()
+      })
       .then(data => setCalendars(data))
-      .catch(() => setError('Error loading calendar data'))
+      .catch(err => setError(err.message || 'Error loading calendar data'))
       .finally(() => setLoading(false))
   }, [])
 

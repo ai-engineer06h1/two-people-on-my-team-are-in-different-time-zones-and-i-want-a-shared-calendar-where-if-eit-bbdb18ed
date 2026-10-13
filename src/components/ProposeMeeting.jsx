@@ -17,16 +17,25 @@ export default function ProposeMeeting() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ time })
     })
-    .then(response => response.json())
+    .then(async response => {
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      const contentType = response.headers.get('content-type') || ''
+      if (!contentType.includes('application/json')) {
+        throw new Error('Expected JSON response')
+      }
+      return response.json()
+    })
     .then(data => {
       if (data.success) {
         setError(null)
         alert('Success: Meeting proposal submitted!')
       } else {
-        setError('Overlap calculation error')
+        setError(data.detail || data.message || 'Overlap calculation error')
       }
     })
-    .catch(() => setError('Error submitting proposal'))
+    .catch(err => setError(err.message || 'Error submitting proposal'))
     .finally(() => setLoading(false))
   }
 
