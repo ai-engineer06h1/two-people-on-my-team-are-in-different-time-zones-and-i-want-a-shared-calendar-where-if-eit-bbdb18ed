@@ -29,8 +29,28 @@ export default function CalendarOverview() {
     <div className="bg-white shadow rounded-lg p-6">
       {Array.isArray(calendars) && calendars.length > 0 ? (
         <div>
-          <h2 className="text-lg font-semibold">Team Calendars</h2>
-          {/* Render calendars here */}
+          <h2 className="text-lg font-semibold mb-4">Team Calendars</h2>
+          <div className="grid gap-4">
+            {calendars.map(calendar => (
+              <div
+                key={calendar.id}
+                className="border rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+              >
+                <div>
+                  <h3 className="font-semibold text-gray-900">{calendar.name}</h3>
+                  <p className="text-sm text-gray-600">Timezone: {calendar.timezone}</p>
+                </div>
+                <div className="text-sm text-gray-700">
+                  <span className="font-medium">Working hours:</span>{' '}
+                  {Array.isArray(calendar.workingHours)
+                    ? calendar.workingHours
+                        .map(wh => `${wh.start || '?'}–${wh.end || '?'}`)
+                        .join(', ')
+                    : '—'}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <div>No meetings scheduled.</div>
